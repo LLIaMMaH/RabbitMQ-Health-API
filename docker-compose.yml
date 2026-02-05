@@ -1,0 +1,17 @@
+services:
+  rabbitmq-health-api:
+    container_name: rabbitmq-health-api
+    image: rabbitmq-health-api:latest
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "14101:14101"
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
