@@ -2,7 +2,7 @@
 
 """Эндпоинт для получения подробной информации о RabbitMQ."""
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status as http_status
 from app.core import get_module_logger
 from app.rabbitmq import (
     get_overview,
@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.get("/status")
-async def status():
+async def get_status():
     """
     Получить подробную информацию о RabbitMQ.
 
@@ -35,7 +35,7 @@ async def status():
     except (RabbitMQConnectionError, RabbitMQAPIError) as e:
         logger.error(f"Ошибка при получении status: {e}")
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            status_code=http_status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Не удалось получить данные от RabbitMQ: {str(e)}",
         ) from e
 
