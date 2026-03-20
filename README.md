@@ -1,7 +1,7 @@
 # RabbitMQ Health API
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-async-success)
 ![Docker](https://img.shields.io/badge/docker-ready-blue)
 
@@ -23,7 +23,8 @@
 5. [Стек технологий](#стек-технологий)
 6. [Запуск проекта](#запуск-проекта)
 7. [Docker и docker-compose](#docker-и-docker-compose)
-8. [Безопасность](#безопасность)
+8. [Логирование](#логирование)
+9. [Безопасность](#безопасность)
 
 ---
 
@@ -176,16 +177,29 @@ API_BASE_PATH=/api/rabbitmq
 
 ## Стек технологий
 
-- **Python 3.12+**
+- **Python 3.13+**
 - **FastAPI** — HTTP API
 - **httpx** — запросы к RabbitMQ Management API
 - **psutil** — метрики ВМ
+- **pydantic-settings** — управление настройками
 - **uv** — управление зависимостями
 - **Docker / Docker Compose** — развёртывание
 
 ---
 
-## Запуск проекта (локально)
+## Запуск проекта
+
+### Локальная разработка
+
+```bash
+# Установка зависимостей
+make install
+
+# Запуск сервера с автоперезагрузкой
+make run
+```
+
+Или вручную:
 
 ```bash
 uv venv
@@ -194,11 +208,33 @@ uv sync
 uvicorn app.main:app --reload
 ```
 
+### Production запуск
+
+```bash
+make prod
+```
+
 ---
 
 ## Docker и docker-compose
 
-Сборка и запуск:
+### Быстрый старт
+
+```bash
+# Сборка образа
+make build
+
+# Запуск контейнеров
+make up
+
+# Просмотр логов
+make logs
+
+# Остановка
+make down
+```
+
+### Вручную
 
 ```bash
 docker compose build
@@ -213,6 +249,42 @@ docker compose up -d
 
 ---
 
+## Логирование
+
+Приложение использует централизованную систему логирования с поддержкой нескольких приёмников.
+
+### Настройка
+
+Параметры логирования задаются в `.env`:
+
+```env
+# Логирование
+LOG_DIR="logs"
+LOG_FILE="app.log"
+LOG_JSON_FILE="app.json"
+
+LOG_TO_FILE=True
+LOG_TO_CONSOLE=True
+LOG_TO_JSON=False
+
+LOG_ROTATION="50 MB"
+LOG_RETENTION="30 days"
+
+LOG_LEVEL_FILE="INFO"
+LOG_LEVEL_CONSOLE="INFO"
+```
+
+### Особенности
+
+- **Фильтрация чувствительных данных** — пароли и токены автоматически скрываются
+- **Ротация логов** — старые файлы архивируются и удаляются
+- **Асинхронная запись** — не блокирует работу приложения
+- **JSON формат** — опционально для удобного парсинга
+
+Логи сохраняются в папку `logs/` (по умолчанию).
+
+---
+
 ## Безопасность
 
 - используется отдельный пользователь RabbitMQ: `monitoring`
@@ -220,9 +292,8 @@ docker compose up -d
 - Management API доступен **только локально**
 - наружу публикуется только HTTP‑сервис
 
-Планы на будущее:  
-- [ ] закрыть `/status` и `/metrics` токеном  
-- [ ] ограничить доступ через Cloudflare Access  
+Планы на будущее:
+- [ ] закрыть `/status` и `/metrics` токеном
 
 ---
 
@@ -233,5 +304,5 @@ docker compose up -d
 * * *
 
 ### Как можно отблагодарить:
-* Оформить удобную для вас подписку на [Boosty.to](https://boosty.to/lliammah/ref)  
-* Разово поддержать через [DonationAlerts](https://www.donationalerts.com/r/lliammah)  
+* Оформить удобную для вас подписку на [Boosty.to](https://boosty.to/lliammah/ref)
+* Разово поддержать через [DonationAlerts](https://www.donationalerts.com/r/lliammah)
