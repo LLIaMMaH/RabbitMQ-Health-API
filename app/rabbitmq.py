@@ -3,7 +3,9 @@
 """Клиент для взаимодействия с RabbitMQ Management API."""
 
 import httpx
-from app.config import settings
+from app.core import settings, get_module_logger
+
+logger = get_module_logger(__name__)
 
 BASE_URL = f"http://{settings.rabbitmq_host}:{settings.rabbitmq_port}/api"
 
@@ -39,11 +41,14 @@ async def get_overview() -> dict:
             r.raise_for_status()
             return r.json()
     except httpx.ConnectError as e:
+        logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
         raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
     except httpx.HTTPStatusError as e:
+        logger.error(f"Ошибка HTTP при запросе overview: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
     except httpx.RequestError as e:
-        raise RabbitMQAPIError(f"Ошибка запроса к RabbitMQ: {e}") from e
+        logger.error(f"Ошибка запроса к RabbitMQ: {e}")
+        raise RabbitMQAPIError(f"Ошибка запроса: {e}") from e
 
 
 async def get_queues() -> list:
@@ -63,11 +68,14 @@ async def get_queues() -> list:
             r.raise_for_status()
             return r.json()
     except httpx.ConnectError as e:
+        logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
         raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
     except httpx.HTTPStatusError as e:
+        logger.error(f"Ошибка HTTP при запросе queues: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
     except httpx.RequestError as e:
-        raise RabbitMQAPIError(f"Ошибка запроса к RabbitMQ: {e}") from e
+        logger.error(f"Ошибка запроса к RabbitMQ: {e}")
+        raise RabbitMQAPIError(f"Ошибка запроса: {e}") from e
 
 
 async def get_connections() -> list:
@@ -87,8 +95,11 @@ async def get_connections() -> list:
             r.raise_for_status()
             return r.json()
     except httpx.ConnectError as e:
+        logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
         raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
     except httpx.HTTPStatusError as e:
+        logger.error(f"Ошибка HTTP при запросе connections: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
     except httpx.RequestError as e:
-        raise RabbitMQAPIError(f"Ошибка запроса к RabbitMQ: {e}") from e
+        logger.error(f"Ошибка запроса к RabbitMQ: {e}")
+        raise RabbitMQAPIError(f"Ошибка запроса: {e}") from e
