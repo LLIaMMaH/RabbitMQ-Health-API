@@ -3,7 +3,7 @@
 """Модуль настроек приложения RabbitMQ Health API."""
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import SecretStr
+from pydantic import SecretStr, Field
 from functools import lru_cache
 from typing import List
 
@@ -29,8 +29,8 @@ class Settings(BaseSettings):
     # ======================================================
     rabbitmq_host: str = "127.0.0.1"
     rabbitmq_port: int = 15672
-    rabbitmq_user: str
-    rabbitmq_password: SecretStr
+    rabbitmq_user: str = Field(..., description="Пользователь RabbitMQ (из .env)")
+    rabbitmq_password: SecretStr = Field(..., description="Пароль RabbitMQ (из .env)")
 
     # ======================================================
     # Runtime
@@ -68,7 +68,7 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Получить кэшированные настройки приложения."""
-    return Settings()
+    return Settings()  # type: ignore[call-arg]
 
 
 settings = get_settings()

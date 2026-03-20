@@ -51,8 +51,8 @@ def _get_default_log_dir() -> Path:
         Абсолютный путь к папке с логами.
     """
     # Если LOG_DIR абсолютный путь — используем его
-    if Path(settings.LOG_DIR).is_absolute():
-        log_dir = Path(settings.LOG_DIR).resolve()
+    if Path(settings.log_dir).is_absolute():
+        log_dir = Path(settings.log_dir).resolve()
     else:
         # Для Docker: WORKDIR = /app
         # Для локальной разработки: ищем корень проекта
@@ -61,7 +61,7 @@ def _get_default_log_dir() -> Path:
             current = Path(__file__).resolve()
             for parent in [current] + list(current.parents):
                 if (parent / "pyproject.toml").exists():
-                    log_dir = (parent / settings.LOG_DIR).resolve()
+                    log_dir = (parent / settings.log_dir).resolve()
                     break
             else:
                 # Fallback: используем /app/logs для Docker
@@ -100,14 +100,14 @@ def _setup_logger() -> None:
 
     try:
         log_dir = _get_default_log_dir()
-        log_file = log_dir / Path(settings.LOG_FILE).name
-        json_log_file = log_dir / Path(settings.LOG_JSON_FILE).name
+        log_file = log_dir / Path(settings.log_file).name
+        json_log_file = log_dir / Path(settings.log_json_file).name
 
         if not ensure_log_dir(log_file.parent):
-            settings.LOG_TO_FILE = False
+            settings.log_to_file = False
 
         if not ensure_log_dir(json_log_file.parent):
-            settings.LOG_TO_JSON = False
+            settings.log_to_json = False
 
         logger.remove()
 
@@ -123,45 +123,45 @@ def _setup_logger() -> None:
         sinks = [
             {
                 "sink": sys.stderr,
-                "level": settings.LOG_LEVEL_CONSOLE,
+                "level": settings.log_level_console,
                 "format": console_format,
                 "colorize": True,
                 "filter": _sensitive_filter,
-                "enqueue": settings.LOG_ASYNC_LOGGING,
-                "backtrace": settings.DEBUG_MODE,
-                "diagnose": settings.DEBUG_MODE,
-                "enabled": settings.LOG_TO_CONSOLE,
+                "enqueue": settings.log_async_logging,
+                "backtrace": settings.debug_mode,
+                "diagnose": settings.debug_mode,
+                "enabled": settings.log_to_console,
             },
             {
                 "sink": str(log_file),
-                "level": settings.LOG_LEVEL_FILE,
+                "level": settings.log_level_file,
                 "format": (
                     "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | "
                     "{module:<30} | {function:<20} | {line:<4} | {message}"
                 ),
-                "rotation": settings.LOG_ROTATION,
-                "retention": settings.LOG_RETENTION,
+                "rotation": settings.log_rotation,
+                "retention": settings.log_retention,
                 "encoding": "utf-8",
-                "enqueue": settings.LOG_ASYNC_LOGGING,
+                "enqueue": settings.log_async_logging,
                 "compression": "zip",
                 "filter": _sensitive_filter,
-                "backtrace": settings.DEBUG_MODE,
-                "diagnose": settings.DEBUG_MODE,
-                "enabled": settings.LOG_TO_FILE,
+                "backtrace": settings.debug_mode,
+                "diagnose": settings.debug_mode,
+                "enabled": settings.log_to_file,
             },
             {
                 "sink": str(json_log_file),
-                "level": settings.LOG_LEVEL_FILE,
+                "level": settings.log_level_file,
                 "serialize": True,
-                "rotation": settings.LOG_ROTATION,
-                "retention": settings.LOG_RETENTION,
+                "rotation": settings.log_rotation,
+                "retention": settings.log_retention,
                 "encoding": "utf-8",
-                "enqueue": settings.LOG_ASYNC_LOGGING,
+                "enqueue": settings.log_async_logging,
                 "compression": "zip",
                 "filter": _sensitive_filter,
-                "backtrace": settings.DEBUG_MODE,
-                "diagnose": settings.DEBUG_MODE,
-                "enabled": settings.LOG_TO_JSON,
+                "backtrace": settings.debug_mode,
+                "diagnose": settings.debug_mode,
+                "enabled": settings.log_to_json,
             },
         ]
 
@@ -169,7 +169,7 @@ def _setup_logger() -> None:
             if sink_config["enabled"]:
                 logger.add(**{k: v for k, v in sink_config.items() if k != "enabled"})
 
-        if settings.LOG_CAPTURE_EXCEPTIONS:
+        if settings.log_capture_exceptions:
 
             def log_excepthook(exc_type, exc_value, exc_traceback):
                 logger.bind(module="excepthook").opt(
@@ -189,9 +189,9 @@ def init_logger(level: Optional[str] = None) -> None:
     global _logger_initialized
 
     if not _logger_initialized:
-        default_level = level or ("DEBUG" if settings.DEBUG_MODE else "INFO")
-        settings.LOG_LEVEL_FILE = default_level.upper()
-        settings.LOG_LEVEL_CONSOLE = default_level.upper()
+        default_level = level or ("DEBUG" if settings.debug_mode else "INFO")
+        settings.log_level_file = default_level.upper()
+        settings.log_level_console = default_level.upper()
         _setup_logger()
 
 
@@ -200,8 +200,8 @@ def set_log_level(level: str) -> None:
     if level.upper() not in valid_levels:
         raise ValueError(f"Недопустимый уровень логирования: {level}")
 
-    settings.LOG_LEVEL_FILE = level.upper()
-    settings.LOG_LEVEL_CONSOLE = level.upper()
+    settings.log_level_file = level.upper()
+    settings.log_level_console = level.upper()
     logger.remove()
     _setup_logger()
 

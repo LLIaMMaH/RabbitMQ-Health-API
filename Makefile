@@ -21,8 +21,8 @@ help:
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
 	@echo ""
-	@echo "  make fix           - Форматирование кода (black)"
-	@echo "  make check         - Проверка форматирования (black --check)"
+	@echo "  make fix           - Форматирование и исправление кода (ruff + black)"
+	@echo "  make check         - Полная проверка (ruff + pyright + black)"
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
@@ -63,12 +63,15 @@ clean-py:
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
-# --- Code Quality (black) ---
+# --- Code Quality ---
 
 fix:
-	@echo "✨ Форматирование кода (black)..."
+	@echo "✨ Форматирование и исправление кода..."
+	uv run ruff check . --fix
 	uv run black .
 
 check:
-	@echo "🔍 Проверка форматирования (black --check)..."
+	@echo "🔍 Полная проверка кода (ruff + pyright + black)..."
+	uv run ruff check .
+	uv run pyright
 	uv run black . --check
