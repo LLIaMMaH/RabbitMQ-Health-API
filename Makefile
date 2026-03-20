@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install run prod build up down logs clean clean-py
+.PHONY: help install run prod build up down logs clean clean-py fix check
 
 # --- Конфигурация ---
 COMPOSE := docker compose
@@ -20,6 +20,9 @@ help:
 	@echo "  make logs          - Просмотр логов Docker"
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
+	@echo ""
+	@echo "  make fix           - Форматирование кода (black)"
+	@echo "  make check         - Проверка форматирования (black --check)"
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
@@ -59,3 +62,13 @@ clean-py:
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
+
+# --- Code Quality (black) ---
+
+fix:
+	@echo "✨ Форматирование кода (black)..."
+	uv run black .
+
+check:
+	@echo "🔍 Проверка форматирования (black --check)..."
+	uv run black . --check
