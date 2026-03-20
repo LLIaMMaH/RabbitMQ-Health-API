@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr
 from functools import lru_cache
 
 
@@ -22,7 +23,7 @@ class Settings(BaseSettings):
     rabbitmq_host: str = "127.0.0.1"
     rabbitmq_port: int = 15672
     rabbitmq_user: str
-    rabbitmq_password: str
+    rabbitmq_password: SecretStr
 
     # Runtime
     env: str = "dev"
