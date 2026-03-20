@@ -5,7 +5,7 @@ from app.config import settings
 
 BASE_URL = f"http://{settings.rabbitmq_host}:{settings.rabbitmq_port}/api"
 
-auth = (settings.rabbitmq_user, settings.rabbitmq_password)
+auth = (settings.rabbitmq_user, settings.rabbitmq_password.get_secret_value())
 
 
 async def get_overview():
