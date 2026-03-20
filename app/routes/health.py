@@ -2,16 +2,9 @@
 
 from fastapi import APIRouter
 from app.rabbitmq import get_queues, get_connections
+from app.utils import calc_level, calc_load_percent
 
 router = APIRouter()
-
-
-def calc_level(percent: float) -> str:
-    if percent <= 50:
-        return "🟢"
-    if percent <= 75:
-        return "🟡"
-    return "🔴"
 
 
 @router.get("/health")
@@ -22,13 +15,11 @@ async def health():
     total_messages = sum(q.get("messages", 0) for q in queues)
     total_consumers = sum(q.get("consumers", 0) for q in queues)
 
-    # Условная ёмкость: consumers * 100 сообщений
-    capacity = max(total_consumers * 100, 1)
-    load_percent = min((total_messages / capacity) * 100, 100)
+    load_percent = calc_load_percent(total_messages, total_consumers)
 
     return {
         "messages": total_messages,
         "connections": len(connections),
-        "load_percent": round(load_percent, 2),
+        "load_percent": load_percent,
         "level": calc_level(load_percent),
     }
