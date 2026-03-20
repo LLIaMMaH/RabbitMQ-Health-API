@@ -4,7 +4,13 @@
 
 from fastapi import APIRouter, HTTPException, status
 from app.core import get_module_logger
-from app.rabbitmq import get_overview, get_queues, get_connections, RabbitMQConnectionError, RabbitMQAPIError
+from app.rabbitmq import (
+    get_overview,
+    get_queues,
+    get_connections,
+    RabbitMQConnectionError,
+    RabbitMQAPIError,
+)
 
 logger = get_module_logger(__name__)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install run prod build up down logs clean clean-py
+.PHONY: help install run prod build up down logs clean clean-py fix check
 
 # --- Конфигурация ---
 COMPOSE := docker compose
@@ -11,7 +11,7 @@ PORT := 14101
 help:
 	@echo "RabbitMQ Health API - доступные команды:"
 	@echo ""
-	@echo "  make install       - Установить зависимости (uv)"
+	@echo "  make install       - Установить все зависимости (uv)"
 	@echo "  make run           - Запуск локального сервера с reload"
 	@echo "  make prod          - Запуск production сервера"
 	@echo "  make build         - Сборка Docker-образа"
@@ -20,10 +20,13 @@ help:
 	@echo "  make logs          - Просмотр логов Docker"
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
+	@echo ""
+	@echo "  make fix           - Форматирование кода (black)"
+	@echo "  make check         - Проверка форматирования (black --check)"
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
-	uv sync --all-extras
+	uv sync --all-extras --dev
 
 run:
 	@echo "🚀 Запуск локального сервера с reload на порту $(PORT)..."
@@ -59,3 +62,13 @@ clean-py:
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
+
+# --- Code Quality (black) ---
+
+fix:
+	@echo "✨ Форматирование кода (black)..."
+	uv run black .
+
+check:
+	@echo "🔍 Проверка форматирования (black --check)..."
+	uv run black . --check
