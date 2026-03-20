@@ -11,7 +11,7 @@ PORT := 14101
 help:
 	@echo "RabbitMQ Health API - доступные команды:"
 	@echo ""
-	@echo "  make install       - Установить зависимости (uv)"
+	@echo "  make install       - Установить все зависимости (uv)"
 	@echo "  make run           - Запуск локального сервера с reload"
 	@echo "  make prod          - Запуск production сервера"
 	@echo "  make build         - Сборка Docker-образа"
@@ -26,7 +26,7 @@ help:
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
-	uv sync --all-extras
+	uv sync --all-extras --dev
 
 run:
 	@echo "🚀 Запуск локального сервера с reload на порту $(PORT)..."

@@ -25,6 +25,7 @@ _logger_initialized = False
 
 class LoggingSetupError(Exception):
     """Исключение для ошибок настройки логирования."""
+
     pass
 
 
@@ -68,7 +69,7 @@ def _get_default_log_dir() -> Path:
         except Exception:
             # Fallback: используем /app/logs для Docker
             log_dir = Path("/app/logs").resolve()
-    
+
     if ensure_log_dir(log_dir):
         return log_dir
     raise LoggingSetupError(f"Директория логов недоступна: {log_dir}")
@@ -169,6 +170,7 @@ def _setup_logger() -> None:
                 logger.add(**{k: v for k, v in sink_config.items() if k != "enabled"})
 
         if settings.LOG_CAPTURE_EXCEPTIONS:
+
             def log_excepthook(exc_type, exc_value, exc_traceback):
                 logger.bind(module="excepthook").opt(
                     exception=(exc_type, exc_value, exc_traceback)
