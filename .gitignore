@@ -12,3 +12,11 @@ wheels/
 .venv
 
 .env
+
+# Logs
+logs/
+*.log
+
+# Source images (favicon source files)
+*.webp
+*.png source files
