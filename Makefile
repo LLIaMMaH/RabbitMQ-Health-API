@@ -5,6 +5,10 @@
 # --- Конфигурация ---
 COMPOSE := docker compose
 PORT := 14101
+UV := uv
+
+# --- Переменные окружения для uv ---
+export UV_LINK_MODE := copy
 
 # --- Команды ---
 
@@ -26,15 +30,15 @@ help:
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
-	uv sync --all-extras --dev
+	$(UV) sync --all-extras --dev
 
 run:
 	@echo "🚀 Запуск локального сервера с reload на порту $(PORT)..."
-	uv run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port $(PORT)
+	@UV_LINK_MODE=copy PYTHONWARNINGS="ignore::UserWarning:multiprocessing.resource_tracker" $(UV) run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port $(PORT)
 
 prod:
 	@echo "🚀 Запуск production сервера на порту $(PORT)..."
-	uv run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT)
+	@UV_LINK_MODE=copy PYTHONWARNINGS="ignore::UserWarning:multiprocessing.resource_tracker" $(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT)
 
 build:
 	@echo "🐳 Сборка Docker-образа..."
@@ -68,11 +72,11 @@ clean-py:
 
 fix:
 	@echo "✨ Форматирование и исправление кода..."
-	uv run ruff check . --fix
-	uv run black .
+	$(UV) run ruff check . --fix
+	$(UV) run black .
 
 check:
 	@echo "🔍 Полная проверка кода (ruff + pyright + black)..."
-	uv run ruff check .
-	uv run pyright
-	uv run black . --check
+	$(UV) run ruff check .
+	$(UV) run pyright
+	$(UV) run black . --check
