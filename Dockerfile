@@ -18,15 +18,14 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Копируем uv из builder
-COPY --from=builder /bin/uv /bin/uv
-
-# Копируем установленные зависимости и код
-COPY --from=builder /app /app
+# Копируем виртуальное окружение и код из builder
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/app /app/app
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 14101
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "14101"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "14101"]
