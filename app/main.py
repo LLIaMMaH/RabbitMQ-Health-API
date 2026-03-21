@@ -21,7 +21,9 @@ STATIC_DIR = BASE_DIR / "static"
 
 app = FastAPI(
     title="RabbitMQ Health API",
-    description=("Сервис для мониторинга RabbitMQ " "и состояния виртуальной машины"),
+    description=(
+        "Сервис для мониторинга RabbitMQ и состояния виртуальной машины"
+    ),
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -49,7 +51,9 @@ async def startup_event():
     """Событие при запуске приложения."""
     logger.info(f"Запуск RabbitMQ Health API на порту {settings.api_port}")
     logger.info(f"Base path: {settings.api_base_path}")
-    logger.info(f"RabbitMQ host: {settings.rabbitmq_host}:" f"{settings.rabbitmq_port}")
+    logger.info(
+        f"RabbitMQ host: {settings.rabbitmq_host}:" f"{settings.rabbitmq_port}"
+    )
 
 
 @app.on_event("shutdown")
