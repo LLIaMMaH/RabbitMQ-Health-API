@@ -9,8 +9,9 @@ COPY pyproject.toml uv.lock ./
 # Установка зависимостей
 RUN uv sync --frozen
 
-# Копируем код
+# Копируем код и статику
 COPY app ./app
+COPY static ./static
 
 
 # Stage 2: Runtime
@@ -21,6 +22,7 @@ WORKDIR /app
 # Копируем виртуальное окружение и код из builder
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/app /app/app
+COPY --from=builder /app/static /app/static
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
