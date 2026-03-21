@@ -52,7 +52,8 @@ async def startup_event():
     logger.info(f"Запуск RabbitMQ Health API на порту {settings.api_port}")
     logger.info(f"Base path: {settings.api_base_path}")
     logger.info(
-        f"RabbitMQ host: {settings.rabbitmq_host}:" f"{settings.rabbitmq_port}"
+        f"RabbitMQ host: {settings.rabbitmq_host}:"
+        f"{settings.rabbitmq_port}"
     )
 
 
