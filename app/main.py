@@ -2,6 +2,8 @@
 
 """RabbitMQ Health API — сервис для мониторинга RabbitMQ и ВМ."""
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +14,10 @@ from app.routes import health, status, metrics
 init_logger()
 
 logger = get_module_logger(__name__)
+
+# Пути к файлам
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "static"
 
 app = FastAPI(
     title="RabbitMQ Health API",
@@ -24,13 +30,13 @@ app = FastAPI(
 )
 
 # Монтирование статических файлов (favicon)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     """Возвращает favicon.ico из корня сайта."""
-    return FileResponse("static/favicon.ico")
+    return FileResponse(STATIC_DIR / "favicon.ico")
 
 
 app.include_router(health.router, prefix=settings.api_base_path)
