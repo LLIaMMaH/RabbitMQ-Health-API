@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install run prod build up down logs clean clean-py fix check check-env
+.PHONY: help install run prod build up down logs clean clean-py fix check check-env dev test-context
 
 # --- Конфигурация ---
 COMPOSE := docker compose
 PORT := 14101
 UV := uv
+TEST_CONTEXT := docker build --no-cache --progress=plain -t test-context .
 
 # --- Переменные окружения для uv ---
 export UV_LINK_MODE := copy
@@ -28,6 +29,8 @@ help:
 	@echo "  make fix           - Форматирование и исправление кода (ruff + black)"
 	@echo "  make check         - Полная проверка (ruff + pyright + black)"
 	@echo "  make check-env     - Сверка .env с .env.template"
+	@echo "  make dev           - Запуск на хосте без Docker (uvicorn reload)"
+	@echo "  make test-context  - Проверка файлов в контексте Docker"
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
@@ -85,3 +88,15 @@ check:
 check-env:
 	@echo "🔍 Сверяю .env с .env.template..."
 	@uv run python scripts/check_env.py
+
+# --- Development ---
+
+dev:
+	@echo "🚀 Локальный сервер на хосте (uvicorn с reload)..."
+	$(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
+
+# --- Docker ---
+
+test-context:
+	@echo "🛠️ Проверка файлов в контексте Docker..."
+	$(TEST_CONTEXT)
