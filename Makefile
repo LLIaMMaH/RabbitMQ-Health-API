@@ -39,8 +39,8 @@ local:
 	$(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
 
 prod:
-	@echo "🐳 Запуск в Docker..."
-	$(COMPOSE) up -d
+	@echo "🐳 Запуск в Docker (с пересборкой)..."
+	$(COMPOSE) up -d --build
 
 build:
 	@echo "🐳 Сборка Docker-образа..."
