@@ -20,6 +20,7 @@ help:
 	@echo "  make local         - Запуск на хосте (uvicorn + reload)"
 	@echo "  make prod          - Запуск в Docker (production)"
 	@echo "  make down          - Остановка Docker-контейнеров"
+	@echo "  make logs          - Логи Docker"
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
 	@echo ""
