@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install run prod build up down logs clean clean-py fix check
+.PHONY: help install run prod build up down logs clean clean-py fix check check-env
 
 # --- Конфигурация ---
 COMPOSE := docker compose
@@ -27,6 +27,7 @@ help:
 	@echo ""
 	@echo "  make fix           - Форматирование и исправление кода (ruff + black)"
 	@echo "  make check         - Полная проверка (ruff + pyright + black)"
+	@echo "  make check-env     - Сверка .env с .env.template"
 
 install:
 	@echo "📦 Установка зависимостей (uv)..."
@@ -80,3 +81,7 @@ check:
 	$(UV) run ruff check .
 	$(UV) run pyright
 	$(UV) run black . --check
+
+check-env:
+	@echo "🔍 Сверяю .env с .env.template..."
+	@uv run python scripts/check_env.py
