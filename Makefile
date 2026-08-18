@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install local prod build down logs clean clean-py fix check check-env test-context
+.PHONY: help install local prod down logs clean clean-py fix check check-env test-context
 
 # --- Конфигурация ---
 COMPOSE := docker compose
@@ -20,8 +20,6 @@ help:
 	@echo "  make local         - Запуск на хосте (uvicorn + reload)"
 	@echo "  make prod          - Запуск в Docker (production)"
 	@echo "  make down          - Остановка Docker-контейнеров"
-	@echo "  make logs          - Логи Docker"
-	@echo "  make build         - Сборка Docker-образа"
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
 	@echo ""
@@ -41,10 +39,6 @@ local:
 prod:
 	@echo "🐳 Запуск в Docker (с пересборкой)..."
 	$(COMPOSE) up -d --build
-
-build:
-	@echo "🐳 Сборка Docker-образа..."
-	$(COMPOSE) build
 
 down:
 	@echo "🛑 Остановка контейнеров..."
