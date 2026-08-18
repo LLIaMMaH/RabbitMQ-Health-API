@@ -39,7 +39,10 @@ def ensure_log_dir(path: str | Path) -> bool:
         test_file.unlink()
         return True
     except (OSError, PermissionError) as e:
-        print(f"[ERROR] Не удалось создать или записать в {path}: {e}", file=sys.stderr)
+        print(
+            f"[ERROR] Не удалось создать или записать в {path}: {e}",
+            file=sys.stderr,
+        )
         return False
 
 
@@ -167,7 +170,9 @@ def _setup_logger() -> None:
 
         for sink_config in sinks:
             if sink_config["enabled"]:
-                logger.add(**{k: v for k, v in sink_config.items() if k != "enabled"})
+                logger.add(
+                    **{k: v for k, v in sink_config.items() if k != "enabled"}
+                )
 
         if settings.log_capture_exceptions:
 

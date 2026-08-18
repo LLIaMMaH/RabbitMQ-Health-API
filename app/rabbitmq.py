@@ -42,7 +42,9 @@ async def get_overview() -> dict:
             return r.json()
     except httpx.ConnectError as e:
         logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
-        raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
+        raise RabbitMQConnectionError(
+            f"Ошибка подключения к RabbitMQ: {e}"
+        ) from e
     except httpx.HTTPStatusError as e:
         logger.error(f"Ошибка HTTP при запросе overview: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
@@ -69,7 +71,9 @@ async def get_queues() -> list:
             return r.json()
     except httpx.ConnectError as e:
         logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
-        raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
+        raise RabbitMQConnectionError(
+            f"Ошибка подключения к RabbitMQ: {e}"
+        ) from e
     except httpx.HTTPStatusError as e:
         logger.error(f"Ошибка HTTP при запросе queues: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
@@ -96,7 +100,9 @@ async def get_connections() -> list:
             return r.json()
     except httpx.ConnectError as e:
         logger.error(f"Не удалось подключиться к RabbitMQ: {e}")
-        raise RabbitMQConnectionError(f"Ошибка подключения к RabbitMQ: {e}") from e
+        raise RabbitMQConnectionError(
+            f"Ошибка подключения к RabbitMQ: {e}"
+        ) from e
     except httpx.HTTPStatusError as e:
         logger.error(f"Ошибка HTTP при запросе connections: {e}")
         raise RabbitMQAPIError(f"Ошибка API RabbitMQ: {e}") from e
