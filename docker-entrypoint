@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+if [ "$(id -u)" = "0" ]; then
+    chown -R appuser:appuser /app/logs 2>/dev/null || true
+    exec setpriv --reuid=appuser --regid=appuser --init-groups "$@"
+fi
+
+exec "$@"
