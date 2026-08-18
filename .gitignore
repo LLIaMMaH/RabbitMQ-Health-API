@@ -17,6 +17,9 @@ wheels/
 logs/
 *.log
 
+# Ruff
+.ruff_cache/
+
 # Source images (favicon source files)
 *.webp
 *.png source files
