@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-.PHONY: help install run prod build up down logs clean clean-py fix check check-env dev test-context
+.PHONY: help install local prod build down logs clean clean-py fix check check-env test-context
 
 # --- Конфигурация ---
 COMPOSE := docker compose
@@ -16,48 +16,42 @@ export UV_LINK_MODE := copy
 help:
 	@echo "RabbitMQ Health API - доступные команды:"
 	@echo ""
-	@echo "  make install       - Установить все зависимости (uv)"
-	@echo "  make run           - Запуск локального сервера с reload"
-	@echo "  make prod          - Запуск production сервера"
-	@echo "  make build         - Сборка Docker-образа"
-	@echo "  make up            - Запуск в Docker (фоновый режим)"
+	@echo "  make install       - Установить зависимости (uv)"
+	@echo "  make local         - Запуск на хосте (uvicorn + reload)"
+	@echo "  make prod          - Запуск в Docker (production)"
 	@echo "  make down          - Остановка Docker-контейнеров"
-	@echo "  make logs          - Просмотр логов Docker"
+	@echo "  make logs          - Логи Docker"
+	@echo "  make build         - Сборка Docker-образа"
 	@echo "  make clean         - Остановка и удаление контейнеров, volumes"
 	@echo "  make clean-py      - Очистка Python-кэша"
 	@echo ""
-	@echo "  make fix           - Форматирование и исправление кода (ruff + black)"
-	@echo "  make check         - Полная проверка (ruff + pyright + black)"
+	@echo "  make fix           - Форматирование и исправление кода"
+	@echo "  make check         - Проверка кода (ruff + pyright)"
 	@echo "  make check-env     - Сверка .env с .env.template"
-	@echo "  make dev           - Запуск на хосте без Docker (uvicorn reload)"
-	@echo "  make test-context  - Проверка файлов в контексте Docker"
+	@echo "  make test-context  - Проверка контекста Docker-сборки"
 
 install:
-	@echo "📦 Установка зависимостей (uv)..."
+	@echo "📦 Установка зависимостей..."
 	$(UV) sync --all-extras --dev
 
-run:
-	@echo "🚀 Запуск локального сервера с reload на порту $(PORT)..."
-	@UV_LINK_MODE=copy PYTHONWARNINGS="ignore::UserWarning:multiprocessing.resource_tracker" $(UV) run python -m uvicorn app.main:app --reload --host 0.0.0.0 --port $(PORT)
+local:
+	@echo "🚀 Запуск на хосте (uvicorn + reload)..."
+	$(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
 
 prod:
-	@echo "🚀 Запуск production сервера на порту $(PORT)..."
-	@UV_LINK_MODE=copy PYTHONWARNINGS="ignore::UserWarning:multiprocessing.resource_tracker" $(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT)
+	@echo "🐳 Запуск в Docker..."
+	$(COMPOSE) up -d
 
 build:
 	@echo "🐳 Сборка Docker-образа..."
 	$(COMPOSE) build
 
-up:
-	@echo "🐳 Запуск в Docker (фоновый режим)..."
-	$(COMPOSE) up -d
-
 down:
-	@echo "🛑 Остановка Docker-контейнеров..."
+	@echo "🛑 Остановка контейнеров..."
 	$(COMPOSE) down
 
 logs:
-	@echo "📋 Просмотр логов Docker..."
+	@echo "📋 Логи Docker..."
 	$(COMPOSE) logs -f
 
 clean:
@@ -80,7 +74,7 @@ fix:
 	$(UV) run black .
 
 check:
-	@echo "🔍 Полная проверка кода (ruff + pyright + black)..."
+	@echo "🔍 Проверка кода (ruff + pyright)..."
 	$(UV) run ruff check .
 	$(UV) run pyright
 	$(UV) run black . --check
@@ -89,14 +83,6 @@ check-env:
 	@echo "🔍 Сверяю .env с .env.template..."
 	@uv run python scripts/check_env.py
 
-# --- Development ---
-
-dev:
-	@echo "🚀 Локальный сервер на хосте (uvicorn с reload)..."
-	$(UV) run python -m uvicorn app.main:app --host 0.0.0.0 --port $(PORT) --reload
-
-# --- Docker ---
-
 test-context:
-	@echo "🛠️ Проверка файлов в контексте Docker..."
+	@echo "🛠️ Проверка контекста Docker-сборки..."
 	$(TEST_CONTEXT)
